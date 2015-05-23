@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Globalization;
 using System.IO;
 using eZet.EveLib.Core.Cache;
@@ -12,18 +11,18 @@ namespace eZet.EveLib.Core {
         /// <summary>
         ///     Directory Separator
         /// </summary>
-        public static readonly string Separator = Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture);
+        public static readonly string Separator = "/"; //Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture);
 
         /// <summary>
         ///     relCachePath to ApplicationData folder.
         /// </summary>
-        public static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                                                Separator;
+        //public static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+        //                                        Separator;
 
         /// <summary>
         ///     relCachePath to image directory
         /// </summary>
-        public static readonly string ImagePath;
+        //public static readonly string ImagePath;
 
         /// <summary>
         ///     The cache factory
@@ -33,15 +32,15 @@ namespace eZet.EveLib.Core {
         /// <summary>
         ///     UserAgent used for HTTP requests
         /// </summary>
-        public static readonly string UserAgent = ConfigurationManager.AppSettings["eveLib.UserAgent"];
+        //public static readonly string UserAgent = ConfigurationManager.AppSettings["eveLib.UserAgent"];
 
         static Config() {
-            if (String.IsNullOrEmpty(UserAgent))
-                UserAgent = "EveLib";
-            string appName = ConfigurationManager.AppSettings["eveLib.AppData"];
-            AppData += !string.IsNullOrEmpty(appName) ? appName : "EveLib";
-            ImagePath = AppData + Separator + "Images";
-            CacheFactory = () => new EveLibFileCache(AppData + Separator + "EveXmlCache", "register");
+            //if (String.IsNullOrEmpty(UserAgent))
+            //    UserAgent = "EveLib";
+            //string appName = ConfigurationManager.AppSettings["eveLib.AppData"];
+            //AppData += !string.IsNullOrEmpty(appName) ? appName : "EveLib";
+            //ImagePath = AppData + Separator + "Images";
+            //CacheFactory = () => new EveLibFileCache(AppData + Separator + "EveXmlCache", "register");
         }
     }
 }

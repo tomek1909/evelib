@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using eZet.EveLib.EveXmlModule.Models;
 using eZet.EveLib.EveXmlModule.Models.Account;
 
+using eZet.EveLib.Core;
+
 namespace eZet.EveLib.EveXmlModule {
     /// <summary>
     ///     Provides access to Character objects and related API calls.

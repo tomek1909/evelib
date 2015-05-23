@@ -24,9 +24,9 @@ namespace eZet.EveLib.Core.Util {
         public static HttpWebRequest CreateRequest(Uri uri) {
             HttpWebRequest request = WebRequest.CreateHttp(uri);
             request.Proxy = null;
-            request.UserAgent = Config.UserAgent;
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.GZip;
-            request.ContentType = ContentType;
+            //request.UserAgent = Config.UserAgent;
+            //request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.GZip;
+            //request.ContentType = ContentType;
             return request;
         }
 
@@ -46,10 +46,10 @@ namespace eZet.EveLib.Core.Util {
         /// <param name="request">The request.</param>
         /// <param name="postData">The post data.</param>
         public static void AddPostData(HttpWebRequest request, string postData) {
-            request.ContentLength = postData.Length;
-            using (var writer = new StreamWriter(request.GetRequestStream())) {
-                writer.Write(postData);
-            }
+            //request.ContentLength = postData.Length;
+            //using (var writer = new StreamWriter(request.GetRequestStream())) {
+            //    writer.Write(postData);
+            //}
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace eZet.EveLib.Core.Util {
                 if (response != null) {
                     Trace.TraceEvent(TraceEventType.Information, 0,
                         "Response status: " + response.StatusCode + ", " + response.StatusDescription);
-                    Trace.TraceEvent(TraceEventType.Verbose, 0, "From cache: " + response.IsFromCache);
+                    Trace.TraceEvent(TraceEventType.Verbose, 0, "From cache: "/* + response.IsFromCache*/);
                 }
             }
             catch (WebException e) {
@@ -72,7 +72,7 @@ namespace eZet.EveLib.Core.Util {
                 if (response == null) throw;
                 Trace.TraceEvent(TraceEventType.Information, 0,
                     "Response status: " + response.StatusCode + ", " + response.StatusDescription);
-                Trace.TraceEvent(TraceEventType.Verbose, 0, "From cache: " + response.IsFromCache);
+                Trace.TraceEvent(TraceEventType.Verbose, 0, "From cache: " /*+ response.IsFromCache*/);
                 throw;
             }
             return response;

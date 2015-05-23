@@ -52,7 +52,7 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
         ///     Gets or sets the end time as string.
         /// </summary>
         /// <value>The end time as string.</value>
-        [XmlElement("EndTime")]
+        [XmlElement("trainingEndTime")]
         public string EndTimeAsString {
             get { return EndTime.ToString(XmlHelper.DateFormat); }
             set { EndTime = DateTime.ParseExact(value, XmlHelper.DateFormat, null); }
@@ -69,7 +69,7 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
         ///     Gets or sets the start time as string.
         /// </summary>
         /// <value>The start time as string.</value>
-        [XmlElement("StartTime")]
+        [XmlElement("trainingStartTime")]
         public string StartTimeAsString {
             get { return StartTime.ToString(XmlHelper.DateFormat); }
             set { StartTime = DateTime.ParseExact(value, XmlHelper.DateFormat, null); }

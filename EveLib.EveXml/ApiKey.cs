@@ -40,6 +40,8 @@ namespace eZet.EveLib.EveXmlModule {
         private bool? _isValidKey;
         private object _lazyLoadLock = new object();
 
+        public bool BackgroundDelayed { get; set; }
+
         /// <summary>
         ///     Creates a new instance using the provided key id and vcode.
         /// </summary>

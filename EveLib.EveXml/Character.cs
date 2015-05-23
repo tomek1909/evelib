@@ -10,7 +10,7 @@ using eZet.EveLib.EveXmlModule.Models.Character;
 using eZet.EveLib.EveXmlModule.Models.Misc;
 using FactionWarfareStats = eZet.EveLib.EveXmlModule.Models.Character.FactionWarfareStats;
 
-[assembly: InternalsVisibleTo("EveLib.Test")]
+//[assembly: InternalsVisibleTo("EveLib.Test")]
 
 namespace eZet.EveLib.EveXmlModule {
     /// <summary>
@@ -30,6 +30,12 @@ namespace eZet.EveLib.EveXmlModule {
         private string _corporationName;
         private long _factionId;
         private string _factionName;
+
+        // My - for testing
+        public Character()
+        {
+            IsInitialized = true;
+        }
 
         internal Character(CharacterKey apiKey, ApiKeyInfo.ApiKeyEntity entity) {
             ApiKey = apiKey;
@@ -78,7 +84,7 @@ namespace eZet.EveLib.EveXmlModule {
         /// <summary>
         ///     Gets the Character ID.
         /// </summary>
-        public long CharacterId { get; private set; }
+        public long CharacterId { get; set; }
 
         /// <summary>
         ///     Gets the name of this character. Note: If this object has not already been initialized, this will send a web
@@ -89,7 +95,7 @@ namespace eZet.EveLib.EveXmlModule {
                 if (!_isInitialized) Init();
                 return _characterName;
             }
-            private set { _characterName = value; }
+            set { _characterName = value; }
         }
 
         /// <summary>

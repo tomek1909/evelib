@@ -13,7 +13,7 @@ using FactionWarfareStats = eZet.EveLib.EveXmlModule.Models.Corporation.FactionW
 using MedalList = eZet.EveLib.EveXmlModule.Models.Corporation.MedalList;
 using StandingsList = eZet.EveLib.EveXmlModule.Models.Corporation.StandingsList;
 
-[assembly: InternalsVisibleTo("EveLib.Test")]
+//[assembly: InternalsVisibleTo("EveLib.Test")]
 
 namespace eZet.EveLib.EveXmlModule {
     /// <summary>
@@ -26,6 +26,12 @@ namespace eZet.EveLib.EveXmlModule {
         private string _corporationName;
         private long _factionId;
         private string _factionName;
+
+        // My - for testing
+        public Corporation()
+        {
+            IsInitialized = true;
+        }
 
         /// <summary>
         ///     Creates a new Corporation, preserving the initialized data and key from the passed in entity
@@ -78,7 +84,7 @@ namespace eZet.EveLib.EveXmlModule {
         /// <summary>
         ///     Gets the Corporation ID.
         /// </summary>
-        public long CorporationId { get; private set; }
+        public long CorporationId { get; set; }
 
         /// <summary>
         ///     Gets the Corporation name. Note: If this object has not already been initialized, this will send a web request to
@@ -89,7 +95,7 @@ namespace eZet.EveLib.EveXmlModule {
                 if (!IsInitialized) Init();
                 return _corporationName;
             }
-            private set { _corporationName = value; }
+            set { _corporationName = value; }
         }
 
         /// <summary>
