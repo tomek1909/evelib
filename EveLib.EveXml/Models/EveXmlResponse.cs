@@ -110,5 +110,7 @@ namespace eZet.EveLib.EveXmlModule.Models {
         public void WriteXml(XmlWriter writer) {
             throw new NotImplementedException();
         }
+
+        public bool BackgroundDelayed {get; set;}
     }
 }
