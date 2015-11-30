@@ -27,6 +27,7 @@ using eZet.EveLib.EveCrestModule.Models.Resources;
 using eZet.EveLib.EveCrestModule.Models.Resources.Industry;
 using eZet.EveLib.EveCrestModule.Models.Resources.Market;
 using eZet.EveLib.EveCrestModule.RequestHandlers;
+using eZet.EveLib.EveCrestModule.RequestHandlers.eZet.EveLib.Core.RequestHandlers;
 
 namespace eZet.EveLib.EveCrestModule {
     /// <summary>
@@ -179,7 +180,7 @@ namespace eZet.EveLib.EveCrestModule {
         ///     Gets or sets the request handler.
         /// </summary>
         /// <value>The request handler.</value>
-        public ICrestRequestHandler RequestHandler { get; set; }
+        public ICachedCrestRequestHandler RequestHandler { get; set; }
 
         /// <summary>
         ///     Gets or sets the image request handler.
@@ -236,88 +237,95 @@ namespace eZet.EveLib.EveCrestModule {
         }
 
         /// <summary>
-        ///     Loads a Href async.
+        /// Loads a Href async.
         /// </summary>
         /// <typeparam name="T">The resource type, usually inferred from the parameter</typeparam>
         /// <param name="uri">The Href that should be loaded</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
-        public Task<T> LoadAsync<T>(Href<T> uri) where T : class, ICrestResource<T> {
-            return uri == null ? Task.FromResult(default(T)) : requestAsync<T>(new Uri(uri.Uri));
+        public Task<T> LoadAsync<T>(Href<T> uri, params string[] parameters) where T : class, ICrestResource<T> {
+            return uri == null ? Task.FromResult(default(T)) : requestAsync<T>(new Uri(uri.Uri + getQueryString(parameters)));
         }
 
         /// <summary>
-        ///     Loads a Href
+        /// Loads a Href
         /// </summary>
         /// <typeparam name="T">The resource type, usually inferred from the parameter</typeparam>
         /// <param name="uri">The Href that should be loaded</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
-        public T Load<T>(Href<T> uri) where T : class, ICrestResource<T> {
-            return LoadAsync(uri).Result;
+        public T Load<T>(Href<T> uri, params string[] parameters) where T : class, ICrestResource<T> {
+            return LoadAsync(uri, parameters).Result;
         }
 
         /// <summary>
-        ///     Loads a ILinkedEntity async
+        /// Loads a ILinkedEntity async
         /// </summary>
         /// <typeparam name="T">The resource type, usually inferred from the parameter</typeparam>
         /// <param name="entity">The items that should be loaded</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
-        public Task<T> LoadAsync<T>(ILinkedEntity<T> entity) where T : class, ICrestResource<T> {
-            return entity == null ? Task.FromResult(default(T)) : requestAsync<T>(new Uri(entity.Href.Uri));
+        public Task<T> LoadAsync<T>(ILinkedEntity<T> entity, params string[] parameters) where T : class, ICrestResource<T> {
+            return entity == null ? Task.FromResult(default(T)) : LoadAsync(entity.Href, parameters);
         }
 
         /// <summary>
-        ///     Loads a ILinkedEntity
+        /// Loads a ILinkedEntity
         /// </summary>
         /// <typeparam name="T">The resource type, usually inferred from the parameter</typeparam>
         /// <param name="entity">The items that should be loaded</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
-        public T Load<T>(ILinkedEntity<T> entity) where T : class, ICrestResource<T> {
-            return LoadAsync(entity).Result;
+        public T Load<T>(ILinkedEntity<T> entity, params string[] parameters) where T : class, ICrestResource<T> {
+            return LoadAsync(entity, parameters).Result;
         }
 
         /// <summary>
-        ///     Loads a ILinkedEntity collection async.
+        /// Loads a ILinkedEntity collection async.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="items">The items.</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T[]&gt;.</returns>
-        public Task<IEnumerable<T>> LoadAsync<T>(IEnumerable<ILinkedEntity<T>> items) where T : class, ICrestResource<T> {
+        public Task<IEnumerable<T>> LoadAsync<T>(IEnumerable<ILinkedEntity<T>> items, params string[] parameters) where T : class, ICrestResource<T> {
             if (items == null) return Task.FromResult(new List<T>().AsEnumerable());
-            List<Task<T>> list = items.Select<ILinkedEntity<T>, Task<T>>(LoadAsync).ToList();
+            return LoadAsync(items.Select(r => r.Href), parameters);
+        }
+
+        /// <summary>
+        /// Loads a ILinkedEntity collection.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items">The items.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T[]&gt;.</returns>
+        public IEnumerable<T> Load<T>(IEnumerable<ILinkedEntity<T>> items, params string[] parameters) where T : class, ICrestResource<T> {
+            return LoadAsync(items, parameters).Result;
+        }
+
+
+        /// <summary>
+        /// Loads a Href collection async.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items">The items.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T[]&gt;.</returns>
+        public Task<IEnumerable<T>> LoadAsync<T>(IEnumerable<Href<T>> items, params string[] parameters) where T : class, ICrestResource<T> {
+            if (items == null) return Task.FromResult(new List<T>().AsEnumerable());
+            var list = items.Select(self => LoadAsync(self, parameters)).ToList();
             return Task.WhenAll(list).ContinueWith(task => task.Result.AsEnumerable());
         }
 
         /// <summary>
-        ///     Loads a ILinkedEntity collection.
+        /// Loads a Href collection.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="items">The items.</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T[]&gt;.</returns>
-        public IEnumerable<T> Load<T>(IEnumerable<ILinkedEntity<T>> items) where T : class, ICrestResource<T> {
-            return LoadAsync(items).Result;
-        }
-
-
-        /// <summary>
-        ///     Loads a Href collection async.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="items">The items.</param>
-        /// <returns>Task&lt;T[]&gt;.</returns>
-        public Task<IEnumerable<T>> LoadAsync<T>(IEnumerable<Href<T>> items) where T : class, ICrestResource<T> {
-            if (items == null) return Task.FromResult(new List<T>().AsEnumerable());
-            List<Task<T>> list = items.Select<Href<T>, Task<T>>(LoadAsync).ToList();
-            return Task.WhenAll(list).ContinueWith(task => task.Result.AsEnumerable());
-        }
-
-        /// <summary>
-        ///     Loads a Href collection.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="items">The items.</param>
-        /// <returns>Task&lt;T[]&gt;.</returns>
-        public IEnumerable<T> Load<T>(IEnumerable<Href<T>> items) where T : class, ICrestResource<T> {
-            return LoadAsync(items).Result;
+        public IEnumerable<T> Load<T>(IEnumerable<Href<T>> items, params string[] parameters) where T : class, ICrestResource<T> {
+            return LoadAsync(items, parameters).Result;
         }
 
         /// <summary>
@@ -607,7 +615,6 @@ namespace eZet.EveLib.EveCrestModule {
             return GetIndustryTeamAsync(teamId).Result;
         }
 
-
         /// <summary>
         ///     Returns a list of industry systems and prices
         /// </summary>
@@ -684,7 +691,7 @@ namespace eZet.EveLib.EveCrestModule {
         private async Task<T> requestAsync<T>(Uri uri) where T : class, ICrestResource<T> {
             T response = null;
             if (Mode == CrestMode.Authenticated) {
-                bool retry = false;
+                var retry = false;
                 try {
                     response =
                         await RequestHandler.RequestAsync<T>(uri, AccessToken).ConfigureAwait(false);
@@ -714,6 +721,17 @@ namespace eZet.EveLib.EveCrestModule {
                 response.EveCrest = this;
             }
             return response;
+        }
+        private string getQueryString(params string[] parameters) {
+            var p = "?";
+            var iter = parameters.GetEnumerator();
+
+            while (iter.MoveNext()) {
+                p += iter.Current;
+                iter.MoveNext();
+                p += "=" + iter.Current;
+            }
+            return p;
         }
     }
 }

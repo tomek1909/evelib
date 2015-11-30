@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Net.Http;
 using System.Threading.Tasks;
 using eZet.EveLib.Core.RequestHandlers;
 using eZet.EveLib.Core.Serializers;
@@ -13,9 +14,16 @@ namespace eZet.EveLib.EveCentralModule {
         private const string DefaultUri = "http://api.eve-central.com";
 
         /// <summary>
+        /// Gets or sets the HTTP method.
+        /// </summary>
+        /// <value>The Http method.</value>
+        public HttpMethod Method { get; set; }
+
+        /// <summary>
         ///     Creates a new EveCentral object, with a default base uri and request handler.
         /// </summary>
         public EveCentral() {
+            Method = HttpMethod.Post;
             BaseUri = new Uri(DefaultUri);
             RequestHandler = new RequestHandler(new XmlSerializer());
         }
@@ -28,7 +36,7 @@ namespace eZet.EveLib.EveCentralModule {
         /// <summary>
         ///     Gets or sets the RequestHandler used to perform requests.
         /// </summary>
-        public IRequestHandler RequestHandler { get; set; }
+        public IPostRequestHandler RequestHandler { get; set; }
 
         /// <summary>
         ///     Returns aggregate statistics for the items specified.
@@ -53,7 +61,7 @@ namespace eZet.EveLib.EveCentralModule {
             string queryString = options.GetItemQuery("typeid") + options.GetHourQuery("hours") +
                                  options.GetMinQuantityQuery("minQ") +
                                  options.GetRegionQuery("regionlimit") + options.GetSystemQuery("usesystem");
-            return requestAsync<MarketStatResponse>(relUri, queryString);
+            return requestAsync<MarketStatResponse>(relUri, queryString, Method);
         }
 
         /// <summary>
@@ -80,7 +88,7 @@ namespace eZet.EveLib.EveCentralModule {
             string queryString = options.GetItemQuery("typeid") + options.GetHourQuery("sethours") +
                                  options.GetMinQuantityQuery("setminQ") +
                                  options.GetRegionQuery("regionlimit") + options.GetSystemQuery("usesystem");
-            return requestAsync<QuickLookResponse>(relUri, queryString);
+            return requestAsync<QuickLookResponse>(relUri, queryString, Method);
         }
 
         /// <summary>
@@ -114,11 +122,11 @@ namespace eZet.EveLib.EveCentralModule {
             Contract.Requires(options != null, "Options cannot be null.");
             Contract.Requires(startSystem != null, "Start system cannot be null.");
             Contract.Requires(endSystem != null, "End system cannot be null.");
-            string relUri = "/api/quicklook/onpath";
+            var relUri = "/api/quicklook/onpath";
             relUri += "/from/" + startSystem + "/to/" + endSystem + "/fortype/" + typeId;
-            string queryString = options.GetHourQuery("sethours");
+            var queryString = options.GetHourQuery("sethours");
             queryString += options.GetMinQuantityQuery("setminQ");
-            return requestAsync<QuickLookResponse>(relUri, queryString);
+            return requestAsync<QuickLookResponse>(relUri, queryString, Method);
         }
 
         /// <summary>
@@ -129,7 +137,12 @@ namespace eZet.EveLib.EveCentralModule {
             throw new NotImplementedException();
         }
 
-        private async Task<T> requestAsync<T>(string relUri, string queryString) {
+
+
+        private async Task<T> requestAsync<T>(string relUri, string queryString, HttpMethod method) {
+            if (method == HttpMethod.Post) {
+                return await RequestHandler.PostRequestAsync<T>(new Uri(BaseUri, relUri), queryString).ConfigureAwait(false);
+            }
             var uri = new Uri(BaseUri, relUri + "?" + queryString);
             return await RequestHandler.RequestAsync<T>(uri).ConfigureAwait(false);
         }

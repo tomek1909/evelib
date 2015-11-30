@@ -24,12 +24,12 @@ namespace eZet.EveLib.EveCrestModule.RequestHandlers {
         /// <summary>
         ///     The default public max concurrent requests
         /// </summary>
-        public const int DefaultPublicMaxConcurrentRequests = 1;
+        public const int DefaultPublicMaxConcurrentRequests = 20;
 
         /// <summary>
         ///     The default authed max concurrent requests
         /// </summary>
-        public const int DefaultAuthedMaxConcurrentRequests = 20;
+        public const int DefaultAuthedMaxConcurrentRequests = 10;
 
         /// <summary>
         ///     The defualt charset
@@ -40,6 +40,18 @@ namespace eZet.EveLib.EveCrestModule.RequestHandlers {
         ///     The token type
         /// </summary>
         public const string TokenType = "Bearer";
+
+        /// <summary>
+        ///     Gets or sets the cache mode.
+        /// </summary>
+        /// <value>The cache mode.</value>
+        public CacheLevel CacheLevel { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the cache used by this request handler
+        /// </summary>
+        /// <value>The cache.</value>
+        public IEveLibCache Cache { get; set; }
 
         private readonly TraceSource _trace = new TraceSource("EveLib", SourceLevels.All);
         private int _authedMaxConcurrentRequests;
@@ -139,18 +151,23 @@ namespace eZet.EveLib.EveCrestModule.RequestHandlers {
             string data = null;
             if (CacheLevel == CacheLevel.Default || CacheLevel == CacheLevel.CacheOnly)
                 data = await Cache.LoadAsync(uri).ConfigureAwait(false);
-            bool cached = data != null;
-            if (cached) return Serializer.Deserialize<T>(data);
+            var cached = data != null;
+            T result;
+            if (cached) {
+                result = Serializer.Deserialize<T>(data);
+                result.IsFromCache = true;
+                return result;
+            }
             if (CacheLevel == CacheLevel.CacheOnly) return default(T);
             // set up request
-            CrestMode mode = (accessToken == null) ? CrestMode.Public : CrestMode.Authenticated;
-            HttpWebRequest request = HttpRequestHelper.CreateRequest(uri);
+            var mode = (accessToken == null) ? CrestMode.Public : CrestMode.Authenticated;
+            var request = HttpRequestHelper.CreateRequest(uri);
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             request.Accept = ContentTypes.Get<T>(ThrowOnMissingContentType) + ";";
             request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Default);
-            if (!String.IsNullOrEmpty(Charset)) request.Accept = request.Accept + " " + Charset;
-            if (!String.IsNullOrEmpty(XRequestedWith)) request.Headers.Add("X-Requested-With", XRequestedWith);
-            if (!String.IsNullOrEmpty(UserAgent)) request.UserAgent = UserAgent;
+            if (!string.IsNullOrEmpty(Charset)) request.Accept = request.Accept + " " + Charset;
+            if (!string.IsNullOrEmpty(XRequestedWith)) request.Headers.Add("X-Requested-With", XRequestedWith);
+            if (!string.IsNullOrEmpty(UserAgent)) request.UserAgent = UserAgent;
             if (mode == CrestMode.Authenticated) {
                 request.Headers.Add(HttpRequestHeader.Authorization, TokenType + " " + accessToken);
                 _authedPool.WaitOne();
@@ -162,11 +179,11 @@ namespace eZet.EveLib.EveCrestModule.RequestHandlers {
             _trace.TraceEvent(TraceEventType.Error, 0, "Initiating Request: " + uri);
             WebHeaderCollection header;
             try {
-                HttpWebResponse response = await HttpRequestHelper.GetResponseAsync(request).ConfigureAwait(false);
+                var response = await HttpRequestHelper.GetResponseAsync(request).ConfigureAwait(false);
                 header = response.Headers;
-                string deprecated = response.GetResponseHeader("X-Deprecated");
+                var deprecated = response.GetResponseHeader("X-Deprecated");
 
-                if (!String.IsNullOrEmpty(deprecated)) {
+                if (!string.IsNullOrEmpty(deprecated)) {
                     _trace.TraceEvent(TraceEventType.Warning, 0,
                         "This CREST resource is deprecated. Please update to the newest EveLib version or notify the developers.");
                     if (ThrowOnDeprecated) {
@@ -184,9 +201,12 @@ namespace eZet.EveLib.EveCrestModule.RequestHandlers {
                 else _publicPool.Release();
 
                 _trace.TraceEvent(TraceEventType.Error, 0, "CREST Request Failed.");
+                if (e.Response == null) {
+                    throw new EveCrestException(e.Message, e);
+                }
                 var response = (HttpWebResponse) e.Response;
 
-                Stream responseStream = response.GetResponseStream();
+                var responseStream = response.GetResponseStream();
                 if (responseStream == null) throw new EveCrestException("Undefined error", e);
                 using (var reader = new StreamReader(responseStream)) {
                     data = reader.ReadToEnd();
@@ -201,27 +221,17 @@ namespace eZet.EveLib.EveCrestModule.RequestHandlers {
             }
             if (CacheLevel == CacheLevel.Default || CacheLevel == CacheLevel.Refresh)
                 await Cache.StoreAsync(uri, getCacheExpirationTime(header), data).ConfigureAwait(false);
-            var result = Serializer.Deserialize<T>(data);
+            result = Serializer.Deserialize<T>(data);
             result.ResponseHeaders = header;
             return result;
         }
 
-        /// <summary>
-        ///     Gets or sets the cache mode.
-        /// </summary>
-        /// <value>The cache mode.</value>
-        public CacheLevel CacheLevel { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the cache used by this request handler
-        /// </summary>
-        /// <value>The cache.</value>
-        public IEveLibCache Cache { get; set; }
 
         private static DateTime getCacheExpirationTime(NameValueCollection header) {
-            string cache = header.Get("Cache-Control");
-            string str = cache.Substring(cache.IndexOf('=') + 1);
-            int sec = int.Parse(str);
+            var cache = header.Get("Cache-Control");
+            if (cache == null) return DateTime.UtcNow;
+            var str = cache.Substring(cache.IndexOf('=') + 1);
+            var sec = int.Parse(str);
             return DateTime.UtcNow.AddSeconds(sec);
         }
 

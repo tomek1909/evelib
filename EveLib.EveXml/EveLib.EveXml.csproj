@@ -127,8 +127,10 @@
     <Compile Include="Models\Character\AccountBalance.cs" />
     <Compile Include="Models\Character\AssetList.cs" />
     <Compile Include="Models\Character\BlueprintList.cs" />
+    <Compile Include="Models\Character\Bookmarks.cs" />
     <Compile Include="Models\Character\CalendarEventAttendees.cs" />
     <Compile Include="Models\Character\CharacterSheet.cs" />
+    <Compile Include="Models\Character\ChatChannels.cs" />
     <Compile Include="Models\Character\ContactList.cs" />
     <Compile Include="Models\Character\ContactNotifications.cs" />
     <Compile Include="Models\Character\ContractBids.cs" />

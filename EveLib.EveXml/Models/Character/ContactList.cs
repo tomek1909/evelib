@@ -47,6 +47,27 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
         public EveXmlRowCollection<Contact> AllianceContacts { get; set; }
 
         /// <summary>
+        ///     Gets or sets the personal contact labels.
+        /// </summary>
+        /// <value>The personal contact labels.</value>
+        [XmlElement("rowset")]
+        public EveXmlRowCollection<ContactLabel> PersonalContactLabels { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the corporate contact labels.
+        /// </summary>
+        /// <value>The corporate contact labels.</value>
+        [XmlElement("rowset")]
+        public EveXmlRowCollection<ContactLabel> CorporateContactLabels { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the alliance contact labels.
+        /// </summary>
+        /// <value>The alliance contact labels.</value>
+        [XmlElement("rowset")]
+        public EveXmlRowCollection<ContactLabel> AllianceContactLabels { get; set; }
+
+        /// <summary>
         ///     This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return
         ///     null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the
         ///     <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> to the class.
@@ -71,6 +92,9 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
             PersonalContacts = xml.deserializeRowSet<Contact>("contactList");
             CorporationContacts = xml.deserializeRowSet<Contact>("corporateContactList");
             AllianceContacts = xml.deserializeRowSet<Contact>("allianceContactList");
+            PersonalContactLabels = xml.deserializeRowSet<ContactLabel>("contactLabels");
+            AllianceContactLabels = xml.deserializeRowSet<ContactLabel>("allianceContactLabels");
+            CorporateContactLabels = xml.deserializeRowSet<ContactLabel>("corporateContactLabels");
         }
 
         /// <summary>
@@ -80,6 +104,27 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
         /// <exception cref="System.NotImplementedException"></exception>
         public void WriteXml(XmlWriter writer) {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Class ContactLabel.
+        /// </summary>
+        [Serializable]
+        [XmlRoot("row")]
+        public class ContactLabel {
+            /// <summary>
+            ///     Gets or sets the label identifier.
+            /// </summary>
+            /// <value>The label identifier.</value>
+            [XmlAttribute("labelID")]
+            public long LabelId { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the name.
+            /// </summary>
+            /// <value>The name.</value>
+            [XmlAttribute("name")]
+            public string Name { get; set; }
         }
 
         /// <summary>
@@ -125,6 +170,13 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
                 get { return InWatchlist.ToString(); }
                 set { InWatchlist = (value.ToLower() == "true"); }
             }
+
+            /// <summary>
+            /// Gets or sets the label mask.
+            /// </summary>
+            /// <value>The label mask.</value>
+            [XmlAttribute("labelMask")]
+            public int LabelMask { get; set; }
         }
     }
 }

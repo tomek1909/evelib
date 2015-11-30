@@ -4,7 +4,7 @@
 // Created          : 03-06-2014
 //
 // Last Modified By : Lars Kristian
-// Last Modified On : 06-19-2014
+// Last Modified On : 06-06-2015
 // ***********************************************************************
 // <copyright file="StarbaseDetails.cs" company="">
 //     Copyright (c) . All rights reserved.
@@ -72,19 +72,19 @@ namespace eZet.EveLib.EveXmlModule.Models.Corporation {
         public GeneralSetting GeneralSettings { get; set; }
 
         /// <summary>
+        ///     Gets or sets the combat settings.
+        /// </summary>
+        /// <value>The combat settings.</value>
+        [XmlElement("combatSettings")]
+        public CombatSetting CombatSettings { get; set; }
+
+        /// <summary>
         ///     Gets or sets the fuel.
         /// </summary>
         /// <value>The fuel.</value>
         [XmlElement("rowset")]
         public EveXmlRowCollection<FuelEntry> Fuel { get; set; }
 
-
-        /// <summary>
-        ///     Class CombatSetting.
-        /// </summary>
-        public class CombatSetting {
-            // TODO Implement CombatSetting
-        }
 
         /// <summary>
         ///     Class FuelEntry.
@@ -108,8 +108,70 @@ namespace eZet.EveLib.EveXmlModule.Models.Corporation {
         }
 
         /// <summary>
+        ///     Class CombatSetting.
+        /// </summary>
+        [XmlRoot("combatSettings")]
+        public class CombatSetting {
+            /// <summary>
+            ///     Gets or sets the use standings from.
+            /// </summary>
+            /// <value>The use standings from.</value>
+            [XmlElement("useStandingsFrom")]
+            public CombatSettingEntry UseStandingsFrom { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the on standing drop.
+            /// </summary>
+            /// <value>The on standing drop.</value>
+            [XmlElement("onStandingDrop")]
+            public CombatSettingEntry OnStandingDrop { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the on aggression.
+            /// </summary>
+            /// <value>The on aggression.</value>
+            [XmlElement("onStatusDrop")]
+            public CombatSettingEntry OnAggression { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the on corporation war.
+            /// </summary>
+            /// <value>The on corporation war.</value>
+            [XmlElement("onCorporationWar")]
+            public CombatSettingEntry OnCorporationWar { get; set; }
+        }
+
+        /// <summary>
+        ///     Class CombatSettingEntry.
+        /// </summary>
+        public class CombatSettingEntry {
+            /// <summary>
+            ///     Gets or sets the enabled.
+            /// </summary>
+            /// <value>The enabled.</value>
+            [XmlAttribute("enabled")]
+            public int Enabled { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the standing.
+            /// </summary>
+            /// <value>The standing.</value>
+            [XmlAttribute("standing")]
+            public int Standing { get; set; }
+
+            /// <summary>
+            ///     Gets or sets the owner identifier.
+            /// </summary>
+            /// <value>The owner identifier.</value>
+            [XmlAttribute("ownerID")]
+            public int OwnerId { get; set; }
+        }
+
+
+        /// <summary>
         ///     Class GeneralSetting.
         /// </summary>
+        [XmlRoot("generalSettings")]
         public class GeneralSetting {
             /// <summary>
             ///     Gets or sets the usage flags.

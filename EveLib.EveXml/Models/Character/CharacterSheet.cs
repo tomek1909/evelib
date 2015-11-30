@@ -453,7 +453,7 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
         /// </summary>
         /// <value>The name of the type.</value>
         [XmlAttribute("typeName")]
-        public String TypeName { get; set; }
+        public string TypeName { get; set; }
     }
 
     /// <summary>
@@ -481,14 +481,14 @@ namespace eZet.EveLib.EveXmlModule.Models.Character {
         /// </summary>
         /// <value>The location identifier.</value>
         [XmlAttribute("locationID")]
-        public int LocationId { get; set; }
+        public long LocationId { get; set; }
 
         /// <summary>
         ///     Gets or sets the name of the clone.
         /// </summary>
         /// <value>The name of the clone.</value>
         [XmlAttribute("cloneName")]
-        public String CloneName { get; set; }
+        public string CloneName { get; set; }
     }
 
 

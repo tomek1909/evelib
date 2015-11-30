@@ -1,8 +1,9 @@
-﻿using System;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using eZet.EveLib.EveXmlModule.Models;
+using eZet.EveLib.EveXmlModule.Models.Corporation;
 using eZet.EveLib.EveXmlModule.Models.Misc;
+using FactionWarfareStats = eZet.EveLib.EveXmlModule.Models.Misc.FactionWarfareStats;
 
 namespace eZet.EveLib.EveXmlModule {
     /// <summary>
@@ -40,7 +41,6 @@ namespace eZet.EveLib.EveXmlModule {
             return GetCertificateTreeAsync().Result;
         }
 
-
         /// <summary>
         ///     Returns a list of certificates in eve.
         /// </summary>
@@ -70,7 +70,7 @@ namespace eZet.EveLib.EveXmlModule {
         public Task<EveXmlResponse<CharacterAffiliation>> GetCharacterAffiliationAsync(params long[] list) {
             Contract.Requires(list != null);
             const string relPath = "/eve/CharacterAffiliation.xml.aspx";
-            string ids = String.Join(",", list);
+            var ids = string.Join(",", list);
             return requestAsync<CharacterAffiliation>(relPath, "IDs", ids);
         }
 
@@ -94,7 +94,7 @@ namespace eZet.EveLib.EveXmlModule {
         public Task<EveXmlResponse<CharacterNameId>> GetCharacterIdAsync(params string[] list) {
             Contract.Requires(list != null);
             const string relPath = "/eve/CharacterID.xml.aspx";
-            string names = String.Join(",", list);
+            var names = string.Join(",", list);
             return requestAsync<CharacterNameId>(relPath, "names", names);
         }
 
@@ -155,7 +155,7 @@ namespace eZet.EveLib.EveXmlModule {
         public Task<EveXmlResponse<CharacterNameId>> GetCharacterNameAsync(params long[] list) {
             Contract.Requires(list != null);
             const string relPath = "/eve/CharacterName.xml.aspx";
-            string ids = String.Join(",", list);
+            var ids = string.Join(",", list);
             return requestAsync<CharacterNameId>(relPath, "IDs", ids);
         }
 
@@ -290,7 +290,7 @@ namespace eZet.EveLib.EveXmlModule {
         public Task<EveXmlResponse<TypeName>> GetTypeNameAsync(params long[] list) {
             Contract.Requires(list != null);
             const string relPath = "/eve/TypeName.xml.aspx";
-            string ids = String.Join(",", list);
+            var ids = string.Join(",", list);
             return requestAsync<TypeName>(relPath, "IDs", ids);
         }
 
@@ -346,8 +346,28 @@ namespace eZet.EveLib.EveXmlModule {
         public Task<EveXmlResponse<OwnerCollection>> GetOwnerIdAsync(params string[] list) {
             Contract.Requires(list != null);
             const string relpath = "/eve/OwnerID.xml.aspx";
-            string names = String.Join(",", list);
+            var names = string.Join(",", list);
             return requestAsync<OwnerCollection>(relpath, "names", names);
+        }
+
+        /// <summary>
+        ///     Returns public information about a corporation.
+        /// </summary>
+        /// <param name="corporationId">A corporation ID</param>
+        /// <returns></returns>
+        public EveXmlResponse<CorporationSheet> GetCorporationSheet(long corporationId) {
+            return GetCorporationSheetAsync(corporationId).Result;
+        }
+
+
+        /// <summary>
+        ///     Returns public information about a corporation.
+        /// </summary>
+        /// <param name="corporationId">A corporation ID</param>
+        /// <returns></returns>
+        public Task<EveXmlResponse<CorporationSheet>> GetCorporationSheetAsync(long corporationId) {
+            const string relPath = "/corp/CorporationSheet.xml.aspx";
+            return requestAsync<CorporationSheet>(relPath, null, "corporationId", corporationId);
         }
     }
 }

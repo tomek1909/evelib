@@ -51,9 +51,9 @@ namespace eZet.EveLib.Test {
         [TestMethod]
         public void GetContactList() {
             EveXmlResponse<ContactList> xml = _character.GetContactList();
-            Assert.AreEqual(3010913, xml.Result.PersonalContacts.First().ContactId);
-            Assert.AreEqual(797400947, xml.Result.CorporationContacts.First().ContactId);
-            Assert.AreEqual(797400947, xml.Result.AllianceContacts.First().ContactId);
+            Assert.AreEqual(90000002, xml.Result.PersonalContacts.First().ContactId);
+            Assert.AreEqual(90000002, xml.Result.CorporationContacts.First().ContactId);
+            Assert.AreEqual(90000002, xml.Result.AllianceContacts.First().ContactId);
         }
 
         [TestMethod]
@@ -188,6 +188,18 @@ namespace eZet.EveLib.Test {
         public void GetWalletTransactions() {
             EveXmlResponse<WalletTransactions> xml = _character.GetWalletTransactions();
             Assert.AreEqual(1309776438, xml.Result.Transactions.First().TransactionId);
+        }
+
+        [TestMethod]
+        public void GetChatChannels_ValidRequest_Hasresult() {
+            var res = _character.GetChatChannels();
+            Assert.AreEqual(92168909, res.Result.Channels.First().Operators.First().AccessorId);
+        }
+
+        [TestMethod]
+        public void GetBookmarks_ValidRequest_Hasresult() {
+            var res = _character.GetBookmarks();
+            Assert.AreEqual(0, res.Result.Folders.First().FolderId);
         }
     }
 }
