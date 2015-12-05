@@ -9,7 +9,7 @@ using eZet.EveLib.EveXmlModule.Models.Character;
 using eZet.EveLib.EveXmlModule.Models.Misc;
 using FactionWarfareStats = eZet.EveLib.EveXmlModule.Models.Character.FactionWarfareStats;
 
-[assembly: InternalsVisibleTo("EveLib.Test")]
+//[assembly: InternalsVisibleTo("EveLib.Test")]
 
 namespace eZet.EveLib.EveXmlModule {
     /// <summary>

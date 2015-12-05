@@ -29,12 +29,8 @@ namespace eZet.EveLib.Core {
         /// <summary>
         /// Gets or sets the cache path.
         /// </summary>
-<<<<<<< .merge_file_a25856
-        //public static readonly string ImagePath;
-=======
         /// <value>The cache path.</value>
         public static string CachePath { get; set; }
->>>>>>> .merge_file_a07044
 
         /// <summary>
         ///     The cache factory
@@ -47,14 +43,7 @@ namespace eZet.EveLib.Core {
         //public static readonly string UserAgent = ConfigurationManager.AppSettings["eveLib.UserAgent"];
 
         static Config() {
-<<<<<<< .merge_file_a25856
-            //if (String.IsNullOrEmpty(UserAgent))
-            //    UserAgent = "EveLib";
-            //string appName = ConfigurationManager.AppSettings["eveLib.AppData"];
-            //AppData += !string.IsNullOrEmpty(appName) ? appName : "EveLib";
-            //ImagePath = AppData + Separator + "Images";
-            //CacheFactory = () => new EveLibFileCache(AppData + Separator + "EveXmlCache", "register");
-=======
+            /*
             if (String.IsNullOrEmpty(UserAgent))
                 UserAgent = "EveLib";
             string appName = ConfigurationManager.AppSettings["eveLib.AppData"];
@@ -62,7 +51,7 @@ namespace eZet.EveLib.Core {
             ImagePath = AppData + Separator + "Images";
             CachePath = AppData + Separator + "Cache";
             CacheFactory = module => new EveLibFileCache(CachePath + Separator + module, "register");
->>>>>>> .merge_file_a07044
+            */
         }
     }
 }

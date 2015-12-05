@@ -12,7 +12,7 @@ using FactionWarfareStats = eZet.EveLib.EveXmlModule.Models.Corporation.FactionW
 using MedalList = eZet.EveLib.EveXmlModule.Models.Corporation.MedalList;
 using StandingsList = eZet.EveLib.EveXmlModule.Models.Corporation.StandingsList;
 
-[assembly: InternalsVisibleTo("EveLib.Test")]
+//[assembly: InternalsVisibleTo("EveLib.Test")]
 
 namespace eZet.EveLib.EveXmlModule {
     /// <summary>
